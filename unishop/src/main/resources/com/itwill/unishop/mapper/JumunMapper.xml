@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itwill.unishop.mapper.JumunMapper">
+	<resultMap type="com.itwill.unishop.domain.Jumun" id="jumunWithJumun_DetailResultMap" autoMapping="true">
+		<collection property="jumun_DetailList" resultMap="com.itwill.unishop.mapper.Jumun_DetailMapper.jumun_DetailResultMap" autoMapping="true">
+		
+		</collection>
+	</resultMap>
+	
+	<!-- create -->
+	<insert id="insertJumun" parameterType="com.itwill.unishop.domain.Jumun">
+		<!--
+		<selectKey resultType="java.lang.Integer"
+			keyProperty="jumun_no" order="BEFORE">
+			select jumun_jumun_no_SEQ.nextval from dual
+		</selectKey>
+		-->
+		insert into JUMUN 
+		values (#{jumun_no}, #{jumun_date}, #{jumun_status},
+				#{jumun_tot_price}, #{card_no}, #{card_expire_date},
+				#{card_cvc}, #{card_member_name}, #{member_id},
+				#{delivery_no})
+	</insert>
+	
+	
+	
+	<!-- select Jumun_no from jumun -->
+	<select id="selectJumunNo" parameterType="com.itwill.unishop.domain.Jumun"
+			resultType="java.lang.Integer">
+		select NVL(MAX(jumun_no),0)+1 as jno from jumun
+	</select>
+	
+	
+	
+	<!-- read -->
+	<select id="selectAll" resultType="com.itwill.unishop.domain.Jumun">
+		select * from JUMUN
+	</select>
+	
+	<select id="selectById"
+			parameterType="java.lang.String"
+			resultType="com.itwill.unishop.domain.Jumun">
+		select *
+		from JUMUN
+		where member_id=#{member_id}
+	</select>
+	
+	<select id="selectJoinById" parameterType="java.lang.String" resultMap="jumunWithJumun_DetailResultMap">
+		select j.jumun_no, j.jumun_date, j.jumun_status, j.jumun_tot_price, jd.jumun_d_product_name, jd.jumun_d_product_size,
+			   jd.jumun_d_product_price, jd.jumun_d_product_qty 
+		from jumun j join jumun_detail jd on j.jumun_no=jd.jumun_no
+		where member_id=#{member_id}
+	</select>
+	
+	<!-- update -->
+	<update id="updateJumun" parameterType="com.itwill.unishop.domain.Jumun"> 
+		update JUMUN 
+		set jumun_no=#{jumun_no},
+			jumun_date=#{jumun_date},
+		    jumun_status=#{jumun_status},
+		    jumun_tot_price=#{jumun_tot_price},
+		    card_no=#{card_no},
+		    card_expire_date=#{card_expire_date},
+		    card_cvc=#{card_cvc},
+		    card_member_name=#{card_member_name},
+		    delivery_no=#{delivery_no}
+		where jumun_no=#{jumun_no} and member_id=#{member_id}
+	</update>
+	
+	<update id="updateJumunCard" parameterType="com.itwill.unishop.domain.Jumun"> 
+		update JUMUN 
+		set card_no=#{card_no},
+		    card_expire_date=#{card_expire_date},
+		    card_cvc=#{card_cvc},
+		    card_member_name=#{card_member_name}
+		where member_id=#{member_id}
+	</update>
+	
+	
+	<!-- delete -->
+	<delete id="deleteJumunByNo" parameterType="_int"> 
+		delete from JUMUN
+		where jumun_no=#{jumun_no}
+		
+	</delete>
+	
+</mapper>
